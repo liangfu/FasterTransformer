@@ -218,7 +218,7 @@ class GPTWeights:
         return len(self.w)
 
     def _map(self, func):
-        assert(self.pre_embed_idx < self.post_embed_idx, "Pre decoder embedding index should be lower than post decoder embedding index.")
+        assert self.pre_embed_idx < self.post_embed_idx, "Pre decoder embedding index should be lower than post decoder embedding index."
         for i in range(len(self.w)):
             if isinstance(self.w[i], list):
                 for j in range(len(self.w[i])):
@@ -525,12 +525,12 @@ class GPT(nn.Module):
             dist.init_process_group(backend='mpi')
         except:
             print("[INFO] WARNING: Have initialized the process group")
-        self.rank = dist.get_rank()
+        self.rank = 0 # dist.get_rank()
         self.device_count = torch.cuda.device_count()
         self.device = self.rank % self.device_count
         torch.cuda.set_device(self.device)
 
-        world_size = dist.get_world_size()
+        world_size = 1 # dist.get_world_size()
         assert world_size == tensor_para_size * pipeline_para_size, "tensor_para_size * pipeline_para_size must be equal to world_size."
 
         self.tensor_para_rank = self.rank % self.tensor_para_size
